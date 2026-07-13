@@ -1,6 +1,7 @@
 // This file centralizes all calls to your FastAPI backend.
-// If you deploy the backend somewhere later, you only need to change this one line.
-const API_BASE = "http://127.0.0.1:8000";
+// Locally, it defaults to your local backend. Once deployed, set VITE_API_URL
+// in Vercel's environment variables to your live Render backend URL.
+const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 async function apiCall(path, options = {}) {
   const res = await fetch(`${API_BASE}${path}`, {
