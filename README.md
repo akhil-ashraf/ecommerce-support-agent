@@ -1,4 +1,4 @@
-# Support Agent (Free Version)
+# Support Agent 
 
 A working AI customer-support agent built with **FastAPI + LangGraph + Groq (free LLM API)**.
 It reads a fake order database, checks a fake shipping tracker, and decides whether to
