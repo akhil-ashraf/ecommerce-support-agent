@@ -4,6 +4,7 @@ Run it, then send it a customer message + order ID, and it replies.
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.database import init_db
@@ -14,6 +15,15 @@ from app.pricing_db import init_pricing_db, get_all_pricing
 from app.pricing_agent import run_pricing_agent, run_pricing_check_all
 
 app = FastAPI(title="E-Commerce Operations Agents API")
+
+# Allows the React frontend (running on a different port, e.g. localhost:5173)
+# to make requests to this API. Without this, the browser blocks the requests.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # for local dev only — restrict this in real production use
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Create the fake databases + sample data the first time this starts
 init_db()
