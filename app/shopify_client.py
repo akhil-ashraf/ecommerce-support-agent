@@ -103,6 +103,33 @@ def set_stock_level(inventory_item_id: int, new_quantity: int):
     return resp.json()
 
 
+def get_all_products():
+    """Returns all products currently in your Shopify store (up to 250)."""
+    resp = requests.get(f"{BASE_URL}/products.json", headers=HEADERS, params={"limit": 250})
+    resp.raise_for_status()
+    return resp.json()["products"]
+
+
+def create_product(title: str, price: float, sku: str = None, image_url: str = None):
+    """Creates a new product in YOUR store (used when importing sample products)."""
+    variant = {"price": str(price)}
+    if sku:
+        variant["sku"] = sku
+
+    payload = {
+        "product": {
+            "title": title,
+            "variants": [variant],
+        }
+    }
+    if image_url:
+        payload["product"]["images"] = [{"src": image_url}]
+
+    resp = requests.post(f"{BASE_URL}/products.json", headers=HEADERS, json=payload)
+    resp.raise_for_status()
+    return resp.json()["product"]
+
+
 def update_price(variant_id: int, new_price: float):
     """Updates a product variant's price in Shopify."""
     resp = requests.put(

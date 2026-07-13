@@ -56,6 +56,22 @@ def init_pricing_db():
     conn.close()
 
 
+def add_pricing_item(sku, product_name, our_cost, min_margin_percent):
+    """Registers cost/margin rules for a new product (call this after adding the product in Shopify)."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT OR REPLACE INTO pricing
+            (sku, product_name, our_price, our_cost, min_margin_percent)
+        VALUES (?, ?, 0, ?, ?)
+        """,
+        (sku, product_name, our_cost, min_margin_percent),
+    )
+    conn.commit()
+    conn.close()
+
+
 def get_price_info(sku: str):
     conn = get_connection()
     cur = conn.cursor()

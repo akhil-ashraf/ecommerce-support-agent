@@ -75,6 +75,29 @@ def get_item(sku: str):
     return dict(row) if row else None
 
 
+def add_inventory_rule(sku, product_name, reorder_threshold, reorder_quantity, supplier_name, supplier_email):
+    """Adds a new item's business rules (used for products imported from other stores)."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT OR IGNORE INTO inventory (sku, product_name, stock_count, reorder_threshold, reorder_quantity, supplier_name, supplier_email) "
+        "VALUES (?, ?, 0, ?, ?, ?, ?)",
+        (sku, product_name, reorder_threshold, reorder_quantity, supplier_name, supplier_email),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_all_product_names():
+    """Returns the set of product names already tracked locally (used to avoid duplicates)."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT product_name FROM inventory")
+    names = {row["product_name"] for row in cur.fetchall()}
+    conn.close()
+    return names
+
+
 def save_purchase_order(sku: str, quantity: int, supplier_name: str):
     conn = get_connection()
     cur = conn.cursor()
